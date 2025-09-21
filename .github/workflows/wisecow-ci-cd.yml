@@ -9,8 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-  # UPDATE these three paths to match your repo structure (quotes handle spaces)
+  # IMAGE_NAME: ${{ github.repository }}
   BUILD_CONTEXT: "./Problem Statement 1 - Solution"
   DOCKERFILE: "./Problem Statement 1 - Solution/Dockerfile"
   MANIFEST_DIR: "./Problem Statement 1 - Solution/k8s-manifests"
@@ -30,6 +29,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: Set lowercase image name
+      run: echo "IMAGE_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
