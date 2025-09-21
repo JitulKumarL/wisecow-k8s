@@ -1,0 +1,71 @@
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: ksp-wisecow-block-sh-and-pkg
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: wisecow
+  process:
+    severity: 5
+    matchPaths:
+      - path: /bin/sh
+      - path: /usr/bin/sh
+      - path: /usr/bin/apt
+      - path: /usr/bin/apt-get
+      - path: /usr/bin/dpkg
+      - path: /usr/bin/curl
+      - path: /usr/bin/wget
+  action: Block
+  message: "Block interactive shells and package/exfil tools in wisecow pods"
+---
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: ksp-wisecow-protect-system-dirs
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: wisecow
+  file:
+    severity: 5
+    matchDirectories:
+      - dir: /etc/
+        recursive: true
+        readOnly: true
+      - dir: /usr/
+        recursive: true
+        readOnly: true
+      - dir: /bin/
+        recursive: true
+        readOnly: true
+      - dir: /sbin/
+        recursive: true
+        readOnly: true
+      - dir: /lib/
+        recursive: true
+        readOnly: true
+      - dir: /lib64/
+        recursive: true
+        readOnly: true
+  action: Block
+  message: "Make core system directories read-only in wisecow pods"
+---
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: ksp-wisecow-protect-shadow
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: wisecow
+  file:
+    severity: 6
+    matchPaths:
+      - path: /etc/shadow
+  action: Block
+  message: "Block access to /etc/shadow in wisecow pods"
+
