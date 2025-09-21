@@ -173,6 +173,17 @@ jobs:
         print("All Kubernetes manifests are valid!")
         EOF
 
+    # Continuous Deployment Job (Example for production with accessible K8s cluster)
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: [build-and-push, security-scan, validate-manifests]
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - name: Deploy to Kubernetes
+  #     run: kubectl apply -f "${MANIFEST_DIR}/"
+  
+
   deploy-notification:
     runs-on: ubuntu-latest
     needs: [build-and-push, security-scan, validate-manifests]
